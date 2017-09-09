@@ -10,10 +10,36 @@ public class QuickSort {
         if (high <= low) {
             return;
         }
-        int index = partition(integers, low, high);
+        int index = partitionII(integers, low, high);
 
         sort(integers, low, index);
         sort(integers, index + 1, high);
+
+    }
+
+    private int partitionII(int[] integers, int low, int high) {
+        int index = rand(low,high);
+        swap(integers, low, index);
+        int temp = integers[low];
+        high--;
+        while(low < high) {
+            while (low < high && integers[high] > temp) {
+                high--;
+            }
+            if (low < high) {
+                integers[low++] = integers[high];
+            }
+
+            while (low < high && integers[low] <= temp) {
+                low++;
+            }
+
+            if (low < high) {
+                integers[high--] = integers[low];
+            }
+        }
+        integers[low] = temp;
+        return low;
 
     }
 
@@ -51,6 +77,8 @@ public class QuickSort {
         }
         return low;
     }
+
+
 
     public static void main(String[] args) {
         for (int j = 0; j < 100; j++) {
