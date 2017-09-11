@@ -1,7 +1,5 @@
 package netease;
 
-import sort.MergeSort;
-
 import java.util.*;
 
 /**
