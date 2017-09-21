@@ -43,22 +43,6 @@ public class QuickSort {
 
     }
 
-    public int partition(int[] integers, int low, int high) {
-        int index = rand(low, high);
-        swap(integers, index, high - 1);
-        int j = low;
-        for (int i = low; i < high - 1; i++) {
-            if (integers[i] < integers[high - 1]) {
-                if (i != j) {
-                    swap(integers, i, j);
-                }
-                j++;
-            }
-        }
-        swap(integers, j, high - 1);
-        return j;
-    }
-
     public void swap(int[] integers, int i, int j) {
         if (i > integers.length - 1 || j > integers.length - 1 || i == j) {
             return;
