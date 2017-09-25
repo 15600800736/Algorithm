@@ -7,108 +7,92 @@ import java.util.Scanner;
  */
 public class Main {
     public static void main(String[] args) {
-        int[] a = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22};
-        int[] b = new int[]{0,6};
-        System.out.println(findMedianSortedArrays(a,b));
-//        Scanner scanner = new Scanner(System.in);
-//        int n = scanner.nextInt();
-//        int[] a = new int[n];
-//        for (int i = 0; i < n; i++) {
-//            a[i] = scanner.nextInt();
-//        }
-//        int m = scanner.nextInt();
-//        int[] b = new int[m];
-//        for (int i = 0; i < m; i++) {
-//            b[i] = scanner.nextInt();
-//        }
-//        Integer[] merged = new Integer[n + m];
-//        int i = 0,j = 0,k = 0;
-//        while (i < a.length || j < b.length) {
-//            if (j >= b.length || (i < a.length && j < b.length && a[i] < b[j])) {
-//                merged[k++] = a[i++];
-//                continue;
-//            }
-//            if (i >= a.length || (i < a.length && j < b.length && a[i] > b[j])) {
-//                merged[k++] = b[j++];
-//                continue;
-//            }
-//            if (i < a.length && j < b.length && a[i] == b[j]) {
-//                merged[k++] = a[i++];
-//                j++;
-//            }
-//        }
-//        int c = 0;
-//        while (c < merged.length) {
-//            if (merged[c] == null) {
-//                break;
-//            }
-//            c++;
-//        }
-//        if (c != 0 && c % 2 == 0) {
-//            float result = ((float)merged[c/2] + merged[c/2 - 1]) / 2;
-//            System.out.println(result);
-//        } else if (c % 2 == 1){
-//            System.out.println(merged[c/2]);
-//        } else {
-//            System.out.println(0);
-//        }
-
-    }
-    public static double findMedianSortedArrays(int[] nums1, int[] nums2) {
-        int len = Math.max(nums1.length, nums2.length);
-        int[] maxNum = nums1.length > nums2.length ? nums1 : nums2;
-        int low = 0, high = len;
-        int i = (low + len) >> 1;
-        int j = ((nums1.length + nums2.length + 1) >> 1)  - i;
-        while (low < high) {
-            if (nums1[i] >= nums2[j] ) {
-
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        int x = scanner.nextInt();
+        int size = 6 * n;
+        String[][] dp = new String[n][size];
+        // 1
+        for (int i = 0; i < size; i++) {
+            if (i <= 5) {
+                dp[0][i] = String.valueOf(1) + "/" + "6";
+            } else {
+                dp[0][i] = "0/6";
             }
         }
-        return 0.0;
+        // from 2 to n
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < size; j++) {
+                if (j < i) {
+                    dp[i][j] = "0/1";
+                    continue;
+                }
+                if (dp[i][j] == null) {
+                    dp[i][j] = "0/1";
+                }
+                for (int k = 1; k < 7; k++) {
+                    if (j - k < 0) {
+                        break;
+                    }
+                    dp[i][j] = add(dp[i][j], dp[i - 1][j - k]);
+                }
+                dp[i][j] = multi("1/6", dp[i][j]);
+                dp[i][j] = simple(dp[i][j]);
+            }
+        }
+        String result = "0/1";
+        for (int i = x - 1; i < size; i++) {
+            result = add(result, dp[n - 1][i]);
+            result = simple(result);
+        }
+        String[] strings = result.split("/");
+        if (strings[0].equals("0")) {
+            System.out.println(0);
+        } else if (strings[0].equals(strings[1])) {
+            System.out.println(1);
+        } else {
+            System.out.println(result);
+        }
+
     }
-//    public static void main(String[] args) {
-//        Scanner scanner = new Scanner(System.in);
-//        Set<Integer> set = new HashSet<>();
-//        int n = scanner.nextInt();
-//        for (int i = 0; i < n; i++) {
-//            set.add(scanner.nextInt());
-//        }
-//        int m = scanner.nextInt();
-//        for (int i = 0; i < m; i++) {
-//            set.add(scanner.nextInt());
-//        }
-//        Integer[] merged = set.toArray(new Integer[0]);
-//        merge(merged, 0, merged.length);
-//        int c = set.size();
-//        if (c != 0 && c % 2 == 0) {
-//            float result = ((float) merged[c / 2] + merged[c / 2 - 1]) / 2;
-//            System.out.println(result);
-//        } else if (c % 2 == 1) {
-//            System.out.println(merged[c / 2]);
-//        } else {
-//            System.out.println(0);
-//        }
-//
-//    }
-//
-//    public static void merge(Integer[] integers, int low, int high) {
-//        if (high - low < 2) {
-//            return;
-//        }
-//        int mid = (high + low) >> 1;
-//        merge(integers, low, mid);
-//        merge(integers, mid, high);
-//
-//        Integer[] temp = Arrays.copyOfRange(integers, low, mid);
-//        for (int i = low, j = 0, k = mid; i < high; i++) {
-//            if (j >= mid - low || (j < mid - low && k < high && integers[k] < temp[j])) {
-//                integers[i] = integers[k++];
-//                continue;
-//            }
-//            if (k >= high || (j < mid - low && k < high && integers[k] >= temp[j])) {
-//                integers[i] = temp[j++];
-//            }
-//        }
-//    }
+
+    private static String multi(String s1, String s2) {
+        String[] f = s1.split("/");
+        String[] s = s2.split("/");
+        String child = String.valueOf(Integer.parseInt(f[0]) * Integer.parseInt(s[0]));
+        String parent = String.valueOf(Integer.parseInt(f[1]) * Integer.parseInt(s[1]));
+        return child + "/" + parent;
+    }
+
+    private static String add(String s1, String s2) {
+        String[] f = s1.split("" +
+                "/");
+        String[] s = s2.split("/");
+        String child = String.valueOf(Integer.parseInt(f[0]) * Integer.parseInt(s[1])
+                                        + Integer.parseInt(s[0]) * Integer.parseInt(f[1]));
+        String parent = String.valueOf(Integer.parseInt(f[1]) * Integer.parseInt(s[1]));
+        return child + "/" + parent;
+    }
+    private static String simple(String str) {
+        String[] s = str.split("/");
+        int child = Integer.parseInt(s[0]);
+        int parent = Integer.parseInt(s[1]);
+        if (child == 0) {
+            return "0/1";
+        }
+        if (child == parent) {
+            return "1/1";
+        }
+        int a = parent, b = child;
+        while (a % b != 0) {
+            int mod = a % b;
+            a = b;
+            b = mod;
+        }
+
+        return String.valueOf(child / b) + "/" + String.valueOf(parent / b);
+
+
+
+    }
 }
